@@ -12,6 +12,7 @@ import java.sql.Statement;
 import org.apache.log4j.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 
 import employee.database;
 import jakarta.servlet.RequestDispatcher;
@@ -25,36 +26,24 @@ import jakarta.servlet.http.HttpSession;
 
 public class employee extends HttpServlet {
 	
-	static Logger log = Logger.getLogger(employee.class.getName());	
+	static Logger log= Logger.getLogger(employee.class.getName());  
 
 	protected void doPost(HttpServletRequest req, HttpServletResponse res) throws IOException {
+		
 		res.setContentType("application/json");
+		JSONObject record= new JSONObject();
 		
-		
-		
-		/*GetterandSetter gas = new GetterandSetter();
-		String employeeName, departmentID; 
-		int employeePass;
-		employeeName = gas.getEmployeeName();
-		employeePass = gas.getEmployeePass();
-		departmentID  = gas.getDepartmentID();
-		
-		 /*String  employeeName= (String) record.get("employeeName");
-		int  employeePass= (int) record.get("employeePass");
+		String str=req.getParameter("employeeName");
+		System.out.println("check1 "+str);
+		String  employeeName= (String) record.get("employeeName");
+		String  employeePass= (String) record.get("employeePass");
 		 String  departmentID= (String) record.get("departmentID");
-		// System.out.println("check1" + employeeName);*/
-		 
-		 
-		 String employeeName = req.getParameter("employeeName");
-		String employeePass=req.getParameter("employeePass");
-		String departmentID =req.getParameter("departmentID");
 		
-		req.setAttribute("employeeName", employeeName);
-		req.setAttribute("employeePass", employeePass);
-		req.setAttribute("departmentID", departmentID);
+		 System.out.println(record);
+		 employeeName="Kavya";
+		 employeePass="12345";
+		 departmentID="H1";
 		
-				 //System.out.println("check1" +employeeName);
-				 log.info("code checking");
 		 PrintWriter out= res.getWriter();
 		 database d= new database();
 		
@@ -64,6 +53,7 @@ public class employee extends HttpServlet {
 	        ResultSet r=null;
 		 try {
 			 if(d.validate(employeeName, employeePass, departmentID)) {	 
+				log.info("successfully logged in");
 				 HttpSession session=req.getSession(); 
 				 session.setAttribute("employeeName",employeeName); 
 			
@@ -74,29 +64,30 @@ public class employee extends HttpServlet {
                  st= c.createStatement();
 		         r = st.executeQuery("SELECT * FROM organisation.employeedetails");
                  while(r.next()) {
-                	 JSONObject record= new JSONObject();
+                	 record= new JSONObject();
             		 JSONArray data= new JSONArray();
-            		
+            		 System.out.println("Device connected");
 				        record.put("employeeId", r.getInt("employeeId"));
 		                record.put("employeeName", r.getString("employeeName"));
-		                record.put("employeeAge", r.getInt("employeeAge"));
-		                record.put("employeePass", r.getInt("employeePass"));
+		                record.put("employeeAge", r.getString("employeeAge"));
+		                record.put("employeePass", r.getString("employeePass"));
 		                record.put("departmentID", r.getString("departmentID"));
 		                data.add(record);
 		                out.println(data);
+		                log.info("Successfully fected the data");
 		               System.out.println(data);
-		              // RequestDispatcher rd = req.getRequestDispatcher("update.java");
-					  // rd.include(req, res);
+		               RequestDispatcher rd = req.getRequestDispatcher("update.java");
+					   rd.include(req, res);
 		              
 			}
                  }else{
 				      ps= c.prepareStatement("SELECT * FROM organisation.employeedetails  where employeeName=?");   
 		              ps.setString(1,employeeName);
-		              log.info("device connected");
+		             
 				      //System.out.println("Device connected");
                       ResultSet rs = ps.executeQuery();
 		              while (rs.next()) {
-		            	  JSONObject record= new JSONObject();
+		            	 record= new JSONObject();
 		         		 JSONArray data= new JSONArray();
 		         		
 			          
@@ -107,10 +98,13 @@ public class employee extends HttpServlet {
 			          record.put("departmentID", rs.getString("departmentID"));
 			          data.add(record);
 			          out.println(data);
-		
+			          log.info("Successfully fetched the data");
+			          System.out.println(data);
 		         }
 			}
-			}}
+		
+			}else log.warn("please enter the correct details");
+			 }
 		 catch(Exception e) {
 			
 			e.printStackTrace();

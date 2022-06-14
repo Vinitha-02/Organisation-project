@@ -9,6 +9,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import org.apache.log4j.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -19,25 +20,40 @@ import jakarta.servlet.http.HttpSession;
 
 
 public class update extends HttpServlet{
-	protected void doGet(HttpServletRequest req, HttpServletResponse res) throws IOException {
+	static Logger log= Logger.getLogger(employee.class.getName());  
+
+	protected void doPut(HttpServletRequest req, HttpServletResponse res) throws IOException {
 		res.setContentType("application/json");
-		String employeeAge =req.getParameter("employeeAge");
-		String employeePass =req.getParameter("employeePass");
-		String employeeId =req.getParameter("employeeId");
+		JSONObject record= new JSONObject();
+		String  employeeAge= (String) record.get("employeeAge");
+		String  employeePass= (String) record.get("employeePass");
+	
+		String employeeId= (String) record.get("employeeId");
+		/*String employeeAge =req.getParameter("employeeAge");
+		String  employeePass =req.getParameter("employeePass");
+  int employeeId=Integer.parseInt(req.getParameter("employeeId"));*/
 		
-		Connection c=null;
+ employeeAge="23";	
+  employeePass="123456";
+ employeeId="113";
+ 
 	    PreparedStatement ps=null;
 	    ResultSet rs=null;
 	    PrintWriter out= res.getWriter();
-	   HttpSession session = req.getSession(false);
-		if(session!=null)
+	    HttpSession session = req.getSession();
+	    System.out.println("checked successfully");
+		Connection c=null;
+		if(session  != null)
 		{
+			System.out.println("update successfully");
+			
 			String employeeName= (String) session.getAttribute("employeeName");
 			
 	    try {
 				Class.forName("com.mysql.jdbc.Driver");
 				c=DriverManager.getConnection("jdbc:mysql://localhost:3306/organisation","root","12345");
 				ps= c.prepareStatement("UPDATE organisation.employeedetails SET employeeAge =?, employeePass=? WHERE employeeId =?");
+				log.info("update successfully");
 				System.out.println("update successfully");
 			    ps.setString(1,employeeAge);
 			    ps.setString(2,employeePass);
@@ -45,13 +61,13 @@ public class update extends HttpServlet{
 			   rs = ps.executeQuery();
 			    while (rs.next()) {
 			         JSONArray data= new JSONArray();
-				     JSONObject record= new JSONObject();
+				      record= new JSONObject();
 					 record.put("employeeId", rs.getInt("employeeId"));
 				     record.put("employeeName", rs.getString("employeeName"));
-				     record.put("employeeAge", rs.getInt("employeeAge"));
-				     record.put("employeePass", rs.getInt("employeePass"));
+				     record.put("employeeAge", rs.getString("employeeAge"));
+				     record.put("employeePass", rs.getString("employeePass"));
 				     record.put("departmentID", rs.getString("departmentID"));
-
+                     log.info("printed the details");
 				     data.add(record);
 				     out.println(data);
 			         }
@@ -59,6 +75,9 @@ public class update extends HttpServlet{
 			 catch(Exception e) {
 		
 				e.printStackTrace();
-			}}
+			}
+	    }else {
+	    	log.warn("Session should not be null");
+	    }
 
 	}}
