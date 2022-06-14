@@ -58,7 +58,7 @@ public class update extends HttpServlet{
 			    ps.setString(1,employeeAge);
 			    ps.setString(2,employeePass);
 				ps.setString(3, employeeId);
-			   rs = ps.executeQuery();
+			   rs = ps.executeQuery(); 
 			    while (rs.next()) {
 			         JSONArray data= new JSONArray();
 				      record= new JSONObject();

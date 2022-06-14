@@ -22,7 +22,7 @@ public class database {
 		
 		PreparedStatement ps= con.prepareStatement("SELECT * FROM organisation.employeedetails  where employeeName=? and employeePass=? and departmentID=?");
 	
-		
+		     
 
 			ps.setString(1,employeeName);  
 			ps.setString(2,employeePass); 
@@ -36,7 +36,7 @@ if(rs.next()){
 	status= true;
 }else {
 	log.warn("enter the correct detail and format");}
-	   ps.close();
+	   ps.close(); 
 	   con.close();
 	   }catch(Exception e)
 		{e.printStackTrace();}
