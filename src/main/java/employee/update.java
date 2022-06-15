@@ -27,38 +27,39 @@ public class update extends HttpServlet{
 		JSONObject record= new JSONObject();
 		String  employeeAge= (String) record.get("employeeAge");
 		String  employeePass= (String) record.get("employeePass");
+	    String employeeID= (String) record.get("employeeId");
+	    
 	
-		String employeeId= (String) record.get("employeeId");
-		/*String employeeAge =req.getParameter("employeeAge");
-		String  employeePass =req.getParameter("employeePass");
-  int employeeId=Integer.parseInt(req.getParameter("employeeId"));*/
-		
- employeeAge="23";	
-  employeePass="123456";
- employeeId="113";
- 
-	    PreparedStatement ps=null;
-	    ResultSet rs=null;
-	    PrintWriter out= res.getWriter();
+	    		
+		int employeeId=Integer.parseInt(employeeID);
+         PreparedStatement ps=null;
+	     ResultSet rs=null;
+	     PrintWriter out= res.getWriter();
 	    HttpSession session = req.getSession();
 	    System.out.println("checked successfully");
 		Connection c=null;
 		if(session  != null)
 		{
-			System.out.println("update successfully");
-			
-			String employeeName= (String) session.getAttribute("employeeName");
+	    System.out.println("update successfully");	
+		String employeeName= (String) session.getAttribute("employeeName");
 			
 	    try {
 				Class.forName("com.mysql.jdbc.Driver");
 				c=DriverManager.getConnection("jdbc:mysql://localhost:3306/organisation","root","12345");
-				ps= c.prepareStatement("UPDATE organisation.employeedetails SET employeeAge =?, employeePass=? WHERE employeeId =?");
+				String sql="UPDATE employeedetails SET employeeAge =?, employeePass=? WHERE employeeId =?";
+				ps= c.prepareStatement(sql);
 				log.info("update successfully");
 				System.out.println("update successfully");
 			    ps.setString(1,employeeAge);
 			    ps.setString(2,employeePass);
-				ps.setString(3, employeeId);
-			   rs = ps.executeQuery(); 
+				ps.setInt(3, employeeId);
+		        ps.executeUpdate(); 
+		 
+		       out.println("Details are updated sucessfully");
+		       ps= c.prepareStatement("SELECT * FROM organisation.employeedetails  where employeeName=?");   
+               ps.setString(1,employeeName);
+               rs = ps.executeQuery();
+			
 			    while (rs.next()) {
 			         JSONArray data= new JSONArray();
 				      record= new JSONObject();
@@ -76,8 +77,7 @@ public class update extends HttpServlet{
 		
 				e.printStackTrace();
 			}
-	    }else {
-	    	log.warn("Session should not be null");
+	    }else {log.warn("Session should not be null");
 	    }
 
 	}}

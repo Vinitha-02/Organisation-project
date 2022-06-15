@@ -40,9 +40,7 @@ public class employee extends HttpServlet {
 		 String  departmentID= (String) record.get("departmentID");
 		
 		 System.out.println(record);
-		 employeeName="Kavya";
-		 employeePass="12345";
-		 departmentID="H1";
+		
 		
 		 PrintWriter out= res.getWriter();
 		 database d= new database();
@@ -66,7 +64,7 @@ public class employee extends HttpServlet {
                  while(r.next()) {
                 	 record= new JSONObject();
             		 JSONArray data= new JSONArray();
-            		 System.out.println("Device connected");
+            		 //System.out.println("Device connected");
 				        record.put("employeeId", r.getInt("employeeId"));
 		                record.put("employeeName", r.getString("employeeName"));
 		                record.put("employeeAge", r.getString("employeeAge"));
@@ -74,17 +72,15 @@ public class employee extends HttpServlet {
 		                record.put("departmentID", r.getString("departmentID"));
 		                data.add(record);
 		                out.println(data);
-		                log.info("Successfully fected the data");
+		               log.info("Successfully fetched the data");
 		               System.out.println(data);
-		               RequestDispatcher rd = req.getRequestDispatcher("update.java");
-					   rd.include(req, res);
-		              
-			}
+		         }
+                 
                  }else{
 				      ps= c.prepareStatement("SELECT * FROM organisation.employeedetails  where employeeName=?");   
 		              ps.setString(1,employeeName);
 		             
-				      //System.out.println("Device connected");
+				      System.out.println("Device connected");
                       ResultSet rs = ps.executeQuery();
 		              while (rs.next()) {
 		            	 record= new JSONObject();
@@ -101,10 +97,13 @@ public class employee extends HttpServlet {
 			          log.info("Successfully fetched the data");
 			          System.out.println(data);
 		         }
-			}
+			} 
+				 RequestDispatcher rd = req.getRequestDispatcher("update");
+			   rd.include(req, res);
 		
 			}else log.warn("please enter the correct details");
 			 }
+		
 		 catch(Exception e) {
 			
 			e.printStackTrace();
